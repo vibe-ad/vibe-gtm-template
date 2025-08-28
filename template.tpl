@@ -393,7 +393,7 @@ scenarios:
   code: |-
     // test that gtmOnSuccess() is called when sendPixel succeeds
     mock('sendPixel', function(url, onSuccess, onFailure) {
-      if (onSuccess != null) {
+      if (typeof onSuccess == 'function') {
         onSuccess();
       }
     });
@@ -407,7 +407,7 @@ scenarios:
   code: |-
     // test gtmOnFailure() is called when sendPixel fails
     mock('sendPixel', function(url, onSuccess, onFailure) {
-      if (onFailure != null) {
+      if (typeof onFailure == 'function') {
         onFailure();
       }
     });
@@ -423,6 +423,9 @@ scenarios:
 
     mock('sendPixel', function(url, onSuccess, onFailure) {
       triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
     });
 
     // Call runCode to run the template's code.
@@ -444,6 +447,9 @@ scenarios:
 
     mock('sendPixel', function(url, onSuccess, onFailure) {
       triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
     });
 
     // Call runCode to run the template's code.
@@ -466,6 +472,9 @@ scenarios:
 
     mock('sendPixel', function(url, onSuccess, onFailure) {
       triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
     });
 
     // Call runCode to run the template's code.
@@ -485,6 +494,12 @@ scenarios:
     assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=purchase&ed={"price_usd":"10"}&v=gtm_1&url=vibe.co&ref=vibe.co&ts=1&trk=trkid&t=img');
 - name: getCookieValues and setCookie are invoked
   code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
+    });
+
     // Call runCode to run the template's code.
     runCode({
       pixelId: '1',
@@ -508,6 +523,9 @@ scenarios:
 
     mock('sendPixel', function(url, onSuccess, onFailure) {
       triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
     });
 
     mock('getCookieValues', function(name, decode) {
@@ -541,6 +559,9 @@ scenarios:
 
     mock('sendPixel', function(url, onSuccess, onFailure) {
       triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
     });
 
     mock('getCookieValues', function(name, decode) {
