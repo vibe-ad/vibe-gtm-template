@@ -1,6 +1,8 @@
 homepage: "https://www.vibe.co/"
 documentation: "https://help.vibe.co/en/articles/7884040-install-vibe-pixel-in-google-tag-manager"
 versions:
+  - sha: 4407210c1fd7d0252137e0f76a939523715d246c
+    changeNotes: Adding orderId
   - sha: 905fc7ddb139b084c107beb3be4ff795f4f8c35f
     changeNotes: Fixed test mocking to ensure proper test execution.
   - sha: 53b2a4939a55ee3bf6108f6c94f1a44257ed548c
