@@ -114,6 +114,19 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
+  },
+  {
+    "type": "TEXT",
+    "name": "orderId",
+    "displayName": "Order Id",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "event",
+        "paramValue": "purchase",
+        "type": "EQUALS"
+      }
+    ]
   }
 ]
 
@@ -170,8 +183,15 @@ if (gid === undefined) {
 
 
 var ed = '';
-if (data.event == 'purchase' && data.price) {
-  ed = JSON.stringify({'price_usd': data.price});
+if (data.event == 'purchase') {
+  const payload = {};
+  if (data.price) {
+    payload.price_usd = data.price;
+  }
+  if (data.orderId) {
+    payload.order_id = data.orderId;
+  }
+  ed = JSON.stringify(payload);
 }
 
 var sUrl = 'https://t.vibe.co/pixel/s?' +
@@ -589,6 +609,33 @@ scenarios:
 
     // Verify that the Cookie was correctly set
     assertApi('setCookie').wasCalledWith('_vb', '00000000-0000-0000-0000-000000000000', cookie_options);
+- name: Purchase with orderId sendPixel with right url
+  code: |-
+    var triggerUrls = [];
+
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+      triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
+    });
+
+    // Call runCode to run the template's code.
+    runCode({
+      pixelId: '1',
+      pixelType: 'event_pixel',
+      event: 'purchase',
+      price: '10',
+      orderId: '00xx000'
+    });
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+    // Verify that the URL was correctly fired
+    assertApi('sendPixel').wasCalled();
+    assertThat(triggerUrls.length).isEqualTo(1);
+    assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=purchase&ed={"price_usd":"10","order_id":"00xx000"}&v=gtm_1&url=vibe.co&ref=vibe.co&ts=1&trk=trkid&t=img');
 setup: |-
   // Need to be mocked to fix the UUID
   mock('generateRandom', 1);
