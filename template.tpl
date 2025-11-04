@@ -189,7 +189,7 @@ if (data.event == 'purchase') {
     payload.price_usd = data.price;
   }
   if (data.orderId) {
-    payload.order_id = data.orderId;
+    payload.purchase_id = data.orderId;
   }
   ed = JSON.stringify(payload);
 }
@@ -635,7 +635,7 @@ scenarios:
     // Verify that the URL was correctly fired
     assertApi('sendPixel').wasCalled();
     assertThat(triggerUrls.length).isEqualTo(1);
-    assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=purchase&ed={"price_usd":"10","order_id":"00xx000"}&v=gtm_1&url=vibe.co&ref=vibe.co&ts=1&trk=trkid&t=img');
+    assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=purchase&ed={"price_usd":"10","purchase_id":"00xx000"}&v=gtm_1&url=vibe.co&ref=vibe.co&ts=1&trk=trkid&t=img');
 setup: |-
   // Need to be mocked to fix the UUID
   mock('generateRandom', 1);
