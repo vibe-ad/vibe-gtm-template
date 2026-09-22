@@ -1,6 +1,8 @@
 homepage: "https://www.vibe.co/"
 documentation: "https://help.vibe.co/en/articles/7884040-install-vibe-pixel-in-google-tag-manager"
 versions:
+  - sha: f4b70c02a3bf1ecfcc9aaa3e40d0b390e64ad591
+    changeNotes: Fixing URL truncation when the page URL has multiple query parameters
   - sha: 38a9b36f6b9723626db6e78d140560d84e261321
     changeNotes: Fixing purchase_id parameter
   - sha: e2ef0efd28f89ca82673e236944a54d22c783941

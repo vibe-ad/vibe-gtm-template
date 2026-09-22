@@ -134,7 +134,6 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const sendPixel = require('sendPixel');
-const encodeUri = require('encodeUri');
 const getReferrerUrl = require('getReferrerUrl');
 const getUrl = require('getUrl');
 const generateRandom = require('generateRandom');
@@ -202,8 +201,8 @@ var sUrl = 'https://t.vibe.co/pixel/s?' +
   '&a=' + (data.pixelType == 'page_view_pixel' ? 'page_view' : data.event) +
   '&ed=' + ed +
   '&v=gtm_1' +
-  '&url=' + encodeUri(getUrl()) +
-  '&ref=' + encodeUri(getReferrerUrl()) +
+  '&url=' + encodeUriComponent(getUrl()) +
+  '&ref=' + encodeUriComponent(getReferrerUrl()) +
   '&ts=' + getTimestampMillis() +
   '&trk=trkid' +
   '&t=img';
@@ -636,6 +635,33 @@ scenarios:
     assertApi('sendPixel').wasCalled();
     assertThat(triggerUrls.length).isEqualTo(1);
     assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=purchase&ed={"price_usd":"10","purchase_id":"00xx000"}&v=gtm_1&url=vibe.co&ref=vibe.co&ts=1&trk=trkid&t=img');
+- name: Query parameters in url and ref are fully escaped
+  code: |-
+    var triggerUrls = [];
+
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+      triggerUrls.push(url);
+      if (typeof onSuccess == 'function') {
+        onSuccess();
+      }
+    });
+
+    mock('getUrl', 'https://vibe.co/?utm_campaign=spring&utm_source=facebook');
+    mock('getReferrerUrl', 'https://ref.co/?a=1&b=2');
+
+    // Call runCode to run the template's code.
+    runCode({
+      pixelId: '1',
+      pixelType: 'page_view_pixel'
+    });
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+    // Verify that the URL was correctly fired
+    assertApi('sendPixel').wasCalled();
+    assertThat(triggerUrls.length).isEqualTo(1);
+    assertThat(triggerUrls[0]).isEqualTo('https://t.vibe.co/pixel/s?aid=1&gid=&cid=7a00007a-0000-47a0-8007-a00007a00007&eid=7a00007a-0000-47a0-8007-a00007a00007&a=page_view&ed=&v=gtm_1&url=https%3A%2F%2Fvibe.co%2F%3Futm_campaign%3Dspring%26utm_source%3Dfacebook&ref=https%3A%2F%2Fref.co%2F%3Fa%3D1%26b%3D2&ts=1&trk=trkid&t=img');
 setup: |-
   // Need to be mocked to fix the UUID
   mock('generateRandom', 1);
